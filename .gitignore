@@ -3,3 +3,6 @@ tmp/
 test/
 app/elementToClass
 app/elementToClass.db
+.idea/
+.DS_Store
+.DS_Store?
