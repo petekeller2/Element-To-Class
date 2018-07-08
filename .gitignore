@@ -1,0 +1,5 @@
+venv/
+tmp/
+test/
+app/elementToClass
+app/elementToClass.db

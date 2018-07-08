@@ -1,0 +1,67 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<!--<ul class=entries>-->
+    <!--{% for page_text in text %}-->
+    <!--<li><h2>{{ text.text }}</h2>-->
+        <!--{% endfor %}-->
+<!--</ul>-->
+<form action="upload_css" method="POST" enctype="multipart/form-data">
+<!--    CSS: <input type="file" name="css_file"><br>
+    <input type="submit" value="Submit">
+    {% if filename|length > 0 %}
+        <a href="{{ url_for('download_css', filename=filename) }}">Download</a>
+    {% endif %}
+
+-->
+
+<!-- https://codepen.io/jotavejv/pen/bRdaVJ -->
+<div class="upload">
+ <div class="upload-files">
+  <header>
+   <p>
+    <i class="cloud fa fa-cloud-upload-alt" aria-hidden="true"></i>
+    <span class="up">Element</span>
+    <i class="arrow fa fa-arrow-right" aria-hidden="true"></i>
+    <span class="load">Class</span>
+   </p>
+  </header>
+  <div class="body" id="drop">
+   <i class="fa fa-file-text-o pointer-none" aria-hidden="true"></i>
+   <p class="pointer-none">Move CSS styles off of <br /> elements and into classes</p>
+   <p class="pointer-none"><b>Drag and drop</b> your file here <br /> or <a href="" id="triggerFile">browse</a> to begin the upload</p>
+        <input type="file" name="css_file"/>
+  </div>
+  <footer>
+   <div class="list-files">
+    <!--   template   -->
+   </div>
+        <button type="submit" class="importar">Upload File</button>
+  </footer>
+ </div>
+</div>
+
+<script type="text/javascript" src="{{ url_for('static', filename='fileUpload.js') }}"></script>
+
+{% if filename|length > 0 %}
+<dialog id="dialog" class="mdl-dialog">
+  <h3 class="mdl-dialog__title">MDL Dialog</h3>
+  <div class="mdl-dialog__content">
+    <p>
+      This is an example of the Material Design Lite dialog component.
+      Please use responsibly.
+    </p>
+  </div>
+  <div class="center-align">
+    <button type="button" onclick="window.open('{{ url_for('download_css', filename=filename) }}', '_blank');" class="mdl-button mdl-button--raised mdl-button--colored">Download</button>
+  </div>
+</dialog>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dialog-polyfill/0.4.10/dialog-polyfill.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='fileResultsDialog.js') }}"></script>
+{% endif %}
+
+<script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+
+</form>
+{% endblock %}
