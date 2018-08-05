@@ -6,3 +6,4 @@ app/elementToClass.db
 .idea/
 .DS_Store
 .DS_Store?
+error.log

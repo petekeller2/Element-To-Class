@@ -8,9 +8,6 @@
         dialogPolyfill.registerDialog(dialog);
     }
     dialog.showModal();
-    // closeDialogButton.addEventListener('click', function() {
-    //     dialog.close();
-    // });
     dialog.querySelector('button:not([disabled])')
     .addEventListener('click', function() {
         dialog.close();
@@ -18,7 +15,7 @@
 }());
 
 function downloadCSSFile (filename) {
-    if (filename.length == 0) {
+    if (filename.length === 0) {
         alert('No file to download!');
         return;
     }
@@ -31,5 +28,4 @@ function downloadCSSFile (filename) {
     a.click();
     document.body.removeChild(a);
 
-    // TODO: close dialog
 }

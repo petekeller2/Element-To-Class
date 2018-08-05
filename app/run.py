@@ -5,23 +5,39 @@ from flask import Flask, request, g, \
      render_template, flash, send_from_directory
 from werkzeug.utils import secure_filename
 import logging
+import json
 from logging.handlers import RotatingFileHandler
 
-UPLOAD_FOLDER = os.environ['uploadFolder']
-
 app = Flask(__name__)
-app.config.from_object(__name__)
 
-app.config.update(dict(
-    DATABASE=os.path.join(app.root_path, os.environ['DB']),
-    SECRET_KEY=os.environ['secretKey'],
-    USERNAME=os.environ['username'],
-    PASSWORD=os.environ['password']
-))
+with open(os.path.join(app.root_path, 'config.json')) as f:
+    config = json.load(f)
+
+app.config.update(config)
+# TODO: make sure the download dialog is scrollable
+
+
+class DictNoNone(dict):
+    def __setitem__(self, key, value):
+        if value is not None:
+            dict.__setitem__(self, key, value)
+
+
+database = app.config['DATABASE']
+if os.environ.get('DB'):
+    database = os.path.join(app.root_path, os.environ.get('DB'))
+
+d = DictNoNone()
+d['DATABASE']=database
+d['SECRET_KEY']=os.environ.get('secretKey')
+d['USERNAME']=os.environ.get('username')
+d['PASSWORD']=os.environ.get('password')
+d['UPLOAD_FOLDER']=os.environ.get('uploadFolder')
+# TODO: test to see if env vars overwrite config in json
+app.config.update(d)
 app.config.from_envvar('ELEMENT_TO_CLASS_SETTINGS', silent=True)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-handler = RotatingFileHandler('debug.log', maxBytes=10000, backupCount=1)
+handler = RotatingFileHandler('error.log', maxBytes=10000, backupCount=1)
 handler.setLevel(logging.INFO)
 app.logger.addHandler(handler)
 
@@ -39,16 +55,39 @@ def init_db():
     db.commit()
 
 
-def get_main_page_text():
+def get_page_text():
+    init_page_text_if_none()
     db = get_db()
+    lang = get_lang()
     cur = db.execute('select "text" from PageText order by id desc')
     return cur.fetchall()
+
+
+def get_lang():
+    default_lang = 'EN-US'
+    if request is None or request.accept_languages is None \
+            or request.accept_languages[0] is None \
+            or request.accept_languages[0][0] is None:
+        return default_lang
+    clean_lang = str(request.accept_languages[0][0]).upper().strip()
+    if clean_lang.count is 0:
+        return default_lang
+    # TODO: see if language is being used
 
 
 @app.cli.command('initdb')
 def initdb_command():
     init_db()
     print('Initialized the database.')
+
+
+def init_page_text_if_none():
+    db = get_db()
+    cur = db.execute('select "text" from PageText limit 1')
+    if cur.fetchone() is None:
+        with app.open_resource('init_page_text.sql', mode='r') as f:
+            db.cursor().executescript(f.read())
+        db.commit()
 
 
 def get_db():
@@ -74,7 +113,7 @@ def add_header(r):
 
 @app.route('/')
 def convert_css():
-    page_text = get_main_page_text()
+    page_text = get_page_text()
     return render_template('convert_css.html', page_text=page_text)
 
 
@@ -84,7 +123,6 @@ def get_unique_class_name(class_name, used_class_names, dup_count):
         new_class_name = class_name + '_' + str(dup_count)
     else:
         new_class_name = class_name
-    app.logger.error(new_class_name)
     if new_class_name in used_class_names:
         if not dup_count:
             dup_count = 1
@@ -117,19 +155,24 @@ def get_new_line(line, line_num, used_class_names, element_to_class_str, lines_t
 def upload_css():
     can_upload = True
     if 'css_file' not in request.files:
-        flash('CSS file was not submitted')
+        error_message = 'CSS file was not submitted'
+        flash(error_message)
+        app.logger.error(error_message)
         result = ''
     elif request.method != 'POST':
-        flash('HTTP POST only')
+        error_message = 'HTTP POST only'
+        app.logger.error(error_message)
+        flash(error_message)
         result = ''
     if can_upload:
-        file = request.files['css_file']
-        filename = secure_filename(file.filename)
+        css_file = request.files['css_file']
+        filename = secure_filename(css_file.filename)
         new_filename = 'new_' + filename
+        print(app.config['USERNAME'])
 
         os.remove(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         old_file = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        file.save(old_file)
+        css_file.save(old_file)
 
         lines_that_changed = []
         used_class_names = []
@@ -157,7 +200,7 @@ def upload_css():
             flash_message += ' and ' + str(last_line_number_changed)
         flash(flash_message)
         result = new_filename
-    page_text = get_main_page_text()
+    page_text = get_page_text()
     return render_template('convert_css.html', page_text=page_text, filename=result)
 
 
