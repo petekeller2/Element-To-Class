@@ -1,11 +1,5 @@
-{% extends "layout.html" %}
+{% include "layout.html" %}
 {% block body %}
-
-<!--<ul class=entries>-->
-<!--{% for page_text in text %}-->
-<!--<li><h2>{{ text.text }}</h2>-->
-<!--{% endfor %}-->
-<!--</ul>-->
 <form action="upload_css" method="POST" enctype="multipart/form-data">
     <!-- https://codepen.io/jotavejv/pen/bRdaVJ -->
     {% include "upload.html" %}

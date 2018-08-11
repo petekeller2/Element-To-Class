@@ -14,7 +14,6 @@ with open(os.path.join(app.root_path, 'config.json')) as f:
     config = json.load(f)
 
 app.config.update(config)
-# TODO: make sure the download dialog is scrollable
 
 
 class DictNoNone(dict):
@@ -58,21 +57,33 @@ def init_db():
 def get_page_text():
     init_page_text_if_none()
     db = get_db()
-    lang = get_lang()
-    cur = db.execute('select "text" from PageText order by id desc')
+    lang = get_lang(db)
+    cur = db.execute('select "id", "text" from PageText where language = ?', [lang])
     return cur.fetchall()
 
 
-def get_lang():
-    default_lang = 'EN-US'
+def get_text(page_text, text_id):
+    # TODO
+    text = "Missing Text!"
+    return text
+
+
+def get_lang(db):
+    default_lang = 'EN'
     if request is None or request.accept_languages is None \
             or request.accept_languages[0] is None \
             or request.accept_languages[0][0] is None:
         return default_lang
-    clean_lang = str(request.accept_languages[0][0]).upper().strip()
+    clean_lang = str(request.accept_languages[0][0]).upper()
+    if '-' in clean_lang:
+        clean_lang = clean_lang.split('-')[0]
+    clean_lang = clean_lang.strip()
     if clean_lang.count is 0:
         return default_lang
-    # TODO: see if language is being used
+    cur = db.execute('select "text" from PageText where language = ? limit 1', [clean_lang])
+    if cur.fetchone() is None:
+        return default_lang
+    return clean_lang
 
 
 @app.cli.command('initdb')
@@ -153,6 +164,7 @@ def get_new_line(line, line_num, used_class_names, element_to_class_str, lines_t
 
 @app.route('/upload_css', methods=['POST'])
 def upload_css():
+    # TODO: use page text here
     can_upload = True
     if 'css_file' not in request.files:
         error_message = 'CSS file was not submitted'
@@ -168,20 +180,22 @@ def upload_css():
         css_file = request.files['css_file']
         filename = secure_filename(css_file.filename)
         new_filename = 'new_' + filename
-        print(app.config['USERNAME'])
 
-        os.remove(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         old_file = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        if os.path.isfile(old_file):
+            os.remove(old_file)
         css_file.save(old_file)
 
         lines_that_changed = []
         used_class_names = []
         element_to_class_str = '.element_to_class_'
-        os.remove(os.path.join(app.config['UPLOAD_FOLDER'], new_filename))
         new_file = os.path.join(app.config['UPLOAD_FOLDER'], new_filename)
+        if os.path.isfile(new_file):
+            os.remove(new_file)
         with open(new_file, 'w') as out_file, open(old_file, 'r') as in_file:
             new_file_text = ''
             for line_num, line in enumerate(in_file):
+                line_num += 1
                 new_line = line
                 lstrip_line = line.lstrip()
                 if len(lstrip_line.split('{', 1)) > 1:
