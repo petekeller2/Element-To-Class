@@ -1,4 +1,5 @@
-#About
+# About
+
 This application is used to move
  CSS styles off of elements and onto
  classes. One reason why you would
@@ -8,7 +9,8 @@ This application is used to move
  then use a library that also does
  this.
 
-#Setup
+# Setup
+
 1. Create a venv environment named venv
 2. `export FLASK_APP=app/run.py`
 3. `. venv/bin/activate`

@@ -1,5 +1,5 @@
 <dialog id="dialog" class="mdl-dialog">
-    <h3 class="mdl-dialog__title">New CSS File</h3>
+    <h3 class="mdl-dialog__title">{{ get_text(page_text, 12) }}</h3>
     <div class="mdl-dialog__content">
         <p>
             {% for message in get_flashed_messages() %}
@@ -9,11 +9,11 @@
     </div>
     <br>
     <div class="center-align">
-        <button type="button" onclick="downloadCSSFile('{{ url_for('download_css', filename=filename) }}');" class="mdl-button mdl-button--raised mdl-button--colored mdl-dialog-button">Download</button>
+        <button type="button" onclick="downloadCSSFile('{{ url_for('download_css', filename=filename) }}');" class="mdl-button mdl-button--raised mdl-button--colored mdl-dialog-button">{{ get_text(page_text, 13) }}</button>
     </div>
     <br>
     <div class="center-align">
-        <button type="button" onclick="window.location.href = '/';" class="mdl-button mdl-button--raised mdl-button--accent mdl-dialog-button">Cancel</button>
+        <button type="button" onclick="window.location.href = '/';" class="mdl-button mdl-button--raised mdl-button--accent mdl-dialog-button">{{ get_text(page_text, 14) }}</button>
     </div>
 </dialog>
 

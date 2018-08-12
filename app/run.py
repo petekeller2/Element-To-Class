@@ -23,8 +23,11 @@ class DictNoNone(dict):
 
 
 database = app.config['DATABASE']
-if os.environ.get('DB'):
-    database = os.path.join(app.root_path, os.environ.get('DB'))
+if os.environ.get('database'):
+    parent_dir = app.root_path.split("/")
+    parent_dir.pop()
+    parent_dir = "/".join(parent_dir)
+    database = os.path.join(parent_dir, os.environ.get('database'))
 
 d = DictNoNone()
 d['DATABASE']=database
@@ -32,7 +35,6 @@ d['SECRET_KEY']=os.environ.get('secretKey')
 d['USERNAME']=os.environ.get('username')
 d['PASSWORD']=os.environ.get('password')
 d['UPLOAD_FOLDER']=os.environ.get('uploadFolder')
-# TODO: test to see if env vars overwrite config in json
 app.config.update(d)
 app.config.from_envvar('ELEMENT_TO_CLASS_SETTINGS', silent=True)
 
@@ -58,13 +60,18 @@ def get_page_text():
     init_page_text_if_none()
     db = get_db()
     lang = get_lang(db)
-    cur = db.execute('select "id", "text" from PageText where language = ?', [lang])
+    cur = db.execute('select "text_id", "text" from PageText where language = ?', [lang])
     return cur.fetchall()
 
 
 def get_text(page_text, text_id):
-    # TODO
     text = "Missing Text!"
+    try:
+        text_found = dict(page_text)[text_id]
+        if text_found.count > 0:
+            text = text_found
+    except:
+        pass
     return text
 
 
@@ -125,7 +132,7 @@ def add_header(r):
 @app.route('/')
 def convert_css():
     page_text = get_page_text()
-    return render_template('convert_css.html', page_text=page_text)
+    return render_template('convert_css.html', page_text=page_text, get_text=get_text)
 
 
 def get_unique_class_name(class_name, used_class_names, dup_count):
@@ -164,15 +171,15 @@ def get_new_line(line, line_num, used_class_names, element_to_class_str, lines_t
 
 @app.route('/upload_css', methods=['POST'])
 def upload_css():
-    # TODO: use page text here
+    page_text = get_page_text()
     can_upload = True
     if 'css_file' not in request.files:
-        error_message = 'CSS file was not submitted'
+        error_message = get_text(page_text, 15)
         flash(error_message)
         app.logger.error(error_message)
         result = ''
     elif request.method != 'POST':
-        error_message = 'HTTP POST only'
+        error_message = get_text(page_text, 16)
         app.logger.error(error_message)
         flash(error_message)
         result = ''
@@ -204,18 +211,17 @@ def upload_css():
                 new_file_text += new_line
             out_file.write(new_file_text)
         if not lines_that_changed:
-            flash_message = 'No changes made'
+            flash_message = get_text(page_text, 17)
         elif len(lines_that_changed) == 1:
-            flash_message = 'Line changed: ' + str(lines_that_changed[0])
+            flash_message = get_text(page_text, 18) + ' ' + str(lines_that_changed[0])
         else:
             last_line_number_changed = lines_that_changed.pop()
-            flash_message = 'Lines changed: '
+            flash_message = get_text(page_text, 19) + ' '
             flash_message += ', '.join(str(x) for x in lines_that_changed)
-            flash_message += ' and ' + str(last_line_number_changed)
+            flash_message += ' ' + get_text(page_text, 20) + ' ' + str(last_line_number_changed)
         flash(flash_message)
         result = new_filename
-    page_text = get_page_text()
-    return render_template('convert_css.html', page_text=page_text, filename=result)
+    return render_template('convert_css.html', page_text=page_text, filename=result, get_text=get_text)
 
 
 @app.route('/download_css/<filename>', methods=['GET'])
