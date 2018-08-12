@@ -2,7 +2,7 @@
 import os
 import sqlite3
 from flask import Flask, request, g, \
-     render_template, flash, send_from_directory
+    render_template, flash, send_from_directory
 from werkzeug.utils import secure_filename
 import logging
 import json

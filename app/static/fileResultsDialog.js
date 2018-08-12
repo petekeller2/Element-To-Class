@@ -9,9 +9,9 @@
     }
     dialog.showModal();
     dialog.querySelector('button:not([disabled])')
-    .addEventListener('click', function() {
-        dialog.close();
-    });
+        .addEventListener('click', function() {
+            dialog.close();
+        });
 }());
 
 function downloadCSSFile (filename) {
