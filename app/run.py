@@ -39,6 +39,11 @@ app.config.update(d)
 app.config.from_envvar('ELEMENT_TO_CLASS_SETTINGS', silent=True)
 
 
+handler = RotatingFileHandler('error.log', maxBytes=10000, backupCount=1)
+handler.setLevel(logging.INFO)
+app.logger.addHandler(handler)
+
+
 def connect_db():
     rv = sqlite3.connect(app.config['DATABASE'])
     rv.row_factory = sqlite3.Row
@@ -231,7 +236,4 @@ def download_css(filename):
 
 
 if __name__ == "__main__":
-    handler = RotatingFileHandler('error.log', maxBytes=10000, backupCount=1)
-    handler.setLevel(logging.INFO)
-    app.logger.addHandler(handler)
     app.run()
