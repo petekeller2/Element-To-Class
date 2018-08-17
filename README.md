@@ -8,6 +8,8 @@ This application is used to move
  put styles directly on an element and
  then use a library that also does
  this.
+ 
+ This app is running at [https://www.element-to-class.com/](https://www.element-to-class.com/)
 
 # Setup
 

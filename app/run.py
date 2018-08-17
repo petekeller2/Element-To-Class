@@ -38,10 +38,6 @@ d['UPLOAD_FOLDER']=os.environ.get('uploadFolder')
 app.config.update(d)
 app.config.from_envvar('ELEMENT_TO_CLASS_SETTINGS', silent=True)
 
-handler = RotatingFileHandler('error.log', maxBytes=10000, backupCount=1)
-handler.setLevel(logging.INFO)
-app.logger.addHandler(handler)
-
 
 def connect_db():
     rv = sqlite3.connect(app.config['DATABASE'])
@@ -100,8 +96,13 @@ def initdb_command():
 
 
 def init_page_text_if_none():
-    db = get_db()
-    cur = db.execute('select "text" from PageText limit 1')
+    try:
+        db = get_db()
+        cur = db.execute('select "text" from PageText limit 1')
+    except:
+        init_db()
+        db = get_db()
+        cur = db.execute('select "text" from PageText limit 1')
     if cur.fetchone() is None:
         with app.open_resource('init_page_text.sql', mode='r') as f:
             db.cursor().executescript(f.read())
@@ -228,3 +229,9 @@ def upload_css():
 def download_css(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename=filename)
 
+
+if __name__ == "__main__":
+    handler = RotatingFileHandler('error.log', maxBytes=10000, backupCount=1)
+    handler.setLevel(logging.INFO)
+    app.logger.addHandler(handler)
+    app.run()
