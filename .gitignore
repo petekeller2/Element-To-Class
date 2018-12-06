@@ -7,3 +7,5 @@ elementToClass.db
 .DS_Store?
 error.log
 *.pyc
+*.egg-info/
+*.egg
