@@ -180,13 +180,13 @@ def upload_css():
     page_text = get_page_text()
     can_upload = True
     if 'css_file' not in request.files:
-        error_message = get_text(page_text, 15)
+        error_message = get_text(page_text, 15)  # CSS file was not submitted
         flash(error_message)
         app.logger.error(error_message)
         result = ''
         can_upload = False
     elif request.method != 'POST':
-        error_message = get_text(page_text, 16)
+        error_message = get_text(page_text, 16)  # HTTP POST only
         app.logger.error(error_message)
         flash(error_message)
         result = ''
@@ -219,14 +219,14 @@ def upload_css():
                 new_file_text += new_line
             out_file.write(new_file_text)
         if not lines_that_changed:
-            flash_message = get_text(page_text, 17)
+            flash_message = get_text(page_text, 17)  # No changes made
         elif len(lines_that_changed) == 1:
-            flash_message = get_text(page_text, 18) + ' ' + str(lines_that_changed[0])
+            flash_message = get_text(page_text, 18) + ' ' + str(lines_that_changed[0])  # Line changed:
         else:
             last_line_number_changed = lines_that_changed.pop()
-            flash_message = get_text(page_text, 19) + ' '
+            flash_message = get_text(page_text, 19) + ' '  # Lines changed:
             flash_message += ', '.join(str(x) for x in lines_that_changed)
-            flash_message += ' ' + get_text(page_text, 20) + ' ' + str(last_line_number_changed)
+            flash_message += ' ' + get_text(page_text, 20) + ' ' + str(last_line_number_changed)  # and
         flash(flash_message)
         result = new_filename
     return render_template('convert_css.html', page_text=page_text, filename=result, get_text=get_text)

@@ -3,22 +3,29 @@
         <header>
             <p>
                 <i class="cloud fa fa-cloud-upload-alt" aria-hidden="true"></i>
-                <span class="up">{{ get_text(page_text, 2) }}</span>
+                <span class="up">{{ get_text(page_text, 2) }}</span> <!-- Element -->
                 <i class="arrow fa fa-arrow-right" aria-hidden="true"></i>
-                <span class="load">{{ get_text(page_text, 3) }}</span>
+                <span class="load">{{ get_text(page_text, 3) }}</span> <!-- Class -->
             </p>
         </header>
         <div class="body" id="drop">
             <i class="fa fa-file-text-o pointer-none" aria-hidden="true"></i>
-            <p class="pointer-none">{{ get_text(page_text, 4) }} <br /> {{ get_text(page_text, 5) }}</p>
-            <p class="pointer-none"><b>{{ get_text(page_text, 6) }}</b> {{ get_text(page_text, 7) }} <br /> {{ get_text(page_text, 8) }} <a href="" id="triggerFile">{{ get_text(page_text, 9) }}</a> {{ get_text(page_text, 10) }}</p>
+            <p class="pointer-none">{{ get_text(page_text, 4) }} <!-- Move CSS styles off of -->
+                <br /> {{ get_text(page_text, 5) }} <!-- elements and into classes -->
+            </p>
+            <p class="pointer-none"><b>{{ get_text(page_text, 6) }}</b> <!-- Drag and drop -->
+                {{ get_text(page_text, 7) }} <!-- your CSS file here -->
+                <br /> {{ get_text(page_text, 8) }} <!-- or -->
+                <a href="" id="triggerFile">{{ get_text(page_text, 9) }}</a> <!-- browse -->
+                {{ get_text(page_text, 10) }} <!-- to begin the upload -->
+            </p>
             <input type="file" name="css_file"/>
         </div>
         <footer>
             <div class="list-files">
                 <!--   template   -->
             </div>
-            <button type="submit" class="importar">{{ get_text(page_text, 11) }}</button>
+            <button type="submit" class="importar">{{ get_text(page_text, 11) }}</button> <!-- Upload File -->
         </footer>
     </div>
 </div>
