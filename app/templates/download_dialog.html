@@ -12,8 +12,7 @@
         <button
             type="button"
             onclick="downloadCSSFile('{{ url_for('download_css', filename=filename) }}');"
-            class="mdl-button mdl-button--raised mdl-button--colored mdl-dialog-button"
-        >
+            class="mdl-button mdl-button--raised mdl-button--colored mdl-dialog-button">
             {{ get_text(page_text, 13) }} <!-- Download -->
         </button>
     </div>
@@ -22,8 +21,7 @@
         <button
             type="button"
             onclick="window.location.href = '/';"
-            class="mdl-button mdl-button--raised mdl-button--accent mdl-dialog-button"
-        >
+            class="mdl-button mdl-button--raised mdl-button--accent mdl-dialog-button">
             {{ get_text(page_text, 14) }} <!-- Cancel -->
         </button>
     </div>

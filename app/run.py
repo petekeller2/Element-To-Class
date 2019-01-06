@@ -38,6 +38,7 @@ d['UPLOAD_FOLDER']=os.environ.get('uploadFolder')
 app.config.update(d)
 app.config.from_envvar('ELEMENT_TO_CLASS_SETTINGS', silent=True)
 
+ALLOWED_EXTENSIONS = set(['css', 'sass', 'scss', 'less'])
 
 handler = RotatingFileHandler('error.log', maxBytes=10000, backupCount=1)
 handler.setLevel(logging.INFO)
@@ -135,6 +136,20 @@ def add_header(r):
     return r
 
 
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def any_files_allowed(files):
+    for i, filename in enumerate(files):
+        app.logger.error(filename)
+        app.logger.error(ALLOWED_EXTENSIONS)
+        if allowed_file(filename):
+            return True
+    return False
+
+
 @app.route('/')
 def convert_css():
     page_text = get_page_text()
@@ -179,7 +194,8 @@ def get_new_line(line, line_num, used_class_names, element_to_class_str, lines_t
 def upload_css():
     page_text = get_page_text()
     can_upload = True
-    if 'css_file' not in request.files:
+    css_file = request.files['css_file']
+    if 'css_file' not in request.files or not allowed_file(css_file.filename):
         error_message = get_text(page_text, 15)  # CSS file was not submitted
         flash(error_message)
         app.logger.error(error_message)
@@ -192,7 +208,6 @@ def upload_css():
         result = ''
         can_upload = False
     if can_upload:
-        css_file = request.files['css_file']
         filename = secure_filename(css_file.filename)
         new_filename = 'new_' + filename
 
