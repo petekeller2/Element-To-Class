@@ -3,5 +3,7 @@
   "DATABASE": "",
   "SECRET_KEY": "",
   "USERNAME": "",
-  "PASSWORD": ""
+  "PASSWORD": "",
+  "PRODUCTION": false,
+  "PROD_PATH": ""
 }

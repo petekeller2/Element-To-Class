@@ -35,14 +35,17 @@ d['SECRET_KEY']=os.environ.get('secretKey')
 d['USERNAME']=os.environ.get('username')
 d['PASSWORD']=os.environ.get('password')
 d['UPLOAD_FOLDER']=os.environ.get('uploadFolder')
+d['PRODUCTION']=os.environ.get('production')
+d['PROD_PATH']=os.environ.get('prodPath')
 app.config.update(d)
 app.config.from_envvar('ELEMENT_TO_CLASS_SETTINGS', silent=True)
 
 ALLOWED_EXTENSIONS = set(['css', 'sass', 'scss', 'less'])
 
-handler = RotatingFileHandler('error.log', maxBytes=10000, backupCount=1)
-handler.setLevel(logging.INFO)
-app.logger.addHandler(handler)
+if not app.config['PRODUCTION']:
+    handler = RotatingFileHandler('error.log', maxBytes=10000, backupCount=1)
+    handler.setLevel(logging.INFO)
+    app.logger.addHandler(handler)
 
 
 def connect_db():
@@ -253,9 +256,10 @@ def download_css(filename):
 
 
 if __name__ == "__main__":
-    handler = RotatingFileHandler('/var/www/Element-To-Class/perror.log', maxBytes=10000, backupCount=1)
-    handler.setLevel(logging.INFO)
-    app.logger.addHandler(handler)
-    init_db()
-    print('Initialized the database.')
+    if app.config['PRODUCTION']:
+        handler = RotatingFileHandler(app.config['PROD_PATH'] + '/perror.log', maxBytes=10000, backupCount=1)
+        handler.setLevel(logging.INFO)
+        app.logger.addHandler(handler)
+        init_db()
+        print('Initialized the database.')
     app.run()
