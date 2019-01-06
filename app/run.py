@@ -184,11 +184,13 @@ def upload_css():
         flash(error_message)
         app.logger.error(error_message)
         result = ''
+        can_upload = False
     elif request.method != 'POST':
         error_message = get_text(page_text, 16)
         app.logger.error(error_message)
         flash(error_message)
         result = ''
+        can_upload = False
     if can_upload:
         css_file = request.files['css_file']
         filename = secure_filename(css_file.filename)
