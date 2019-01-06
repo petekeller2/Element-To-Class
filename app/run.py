@@ -253,4 +253,9 @@ def download_css(filename):
 
 
 if __name__ == "__main__":
+    handler = RotatingFileHandler('/var/www/Element-To-Class/perror.log', maxBytes=10000, backupCount=1)
+    handler.setLevel(logging.INFO)
+    app.logger.addHandler(handler)
+    init_db()
+    print('Initialized the database.')
     app.run()
