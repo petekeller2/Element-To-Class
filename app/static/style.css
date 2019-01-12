@@ -472,3 +472,14 @@ body {
 		background-position: 0% 50%
 	}
 }
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+         -o-user-select: none; /* Opera */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
