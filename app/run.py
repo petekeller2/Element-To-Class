@@ -255,6 +255,31 @@ def download_css(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename=filename)
 
 
+@app.errorhandler(403)
+def error_forbidden(e):
+    return render_template('error_403.html'), 403
+
+
+@app.errorhandler(404)
+def error_page_not_found(e):
+    return render_template('error_404.html'), 404
+
+
+@app.errorhandler(405)
+def error_method_not_allowed(e):
+    return render_template('error_405.html'), 405
+
+
+@app.errorhandler(410)
+def error_gone(e):
+    return render_template('error_410.html'), 410
+
+
+@app.errorhandler(500)
+def error_internal_server_error(e):
+    return render_template('error_500.html'), 500
+
+
 if __name__ == "__main__":
     if app.config['PRODUCTION']:
         handler = RotatingFileHandler(app.config['PROD_PATH'] + '/perror.log', maxBytes=10000, backupCount=1)
