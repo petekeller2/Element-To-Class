@@ -1,13 +1,14 @@
 <dialog id="dialog" class="mdl-dialog">
     <h3 class="mdl-dialog__title noselect">{{ get_text(page_text, 12) }}</h3> <!-- New CSS File -->
+    <hr class="top-hr fancy-hr">
     <div class="mdl-dialog__content">
-        <p>
+        <p class="download-message">
             {% for message in get_flashed_messages() %}
                 {{ message }}
             {% endfor %}
         </p>
     </div>
-    <br class="noselect">
+    <hr class="bottom-hr fancy-hr">
     <div class="center-align noselect">
         <button
             type="button"

@@ -483,3 +483,24 @@ body {
             user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome and Opera */
 }
+
+.top-hr {
+    margin-bottom: 0;
+}
+
+.bottom-hr {
+    margin-top: 0;
+}
+
+.download-message {
+    margin-bottom: 0;
+}
+
+.fancy-hr {
+    display:block;
+    border:none;
+    color:white;
+    height:1px;
+    background:black;
+    background: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 250, from(#000), to(#fff));
+}
